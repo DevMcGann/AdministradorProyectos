@@ -3,7 +3,8 @@ const Tareas = require('../models/Tareas');
 
 
 exports.proyectosHome = async (req,res) => {
-    const proyectos = await Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
     res.render('index.pug', {
         nombrePagina: 'Proyectos Admin',
         proyectos
@@ -11,7 +12,8 @@ exports.proyectosHome = async (req,res) => {
 }
 
 exports.formularioProyecto = async  (req,res) => {
-    const proyectos = await Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
     res.render('nuevoProyecto.pug', {
         nombrePagina:'Nuevo Proyecto',
         proyectos
@@ -19,7 +21,8 @@ exports.formularioProyecto = async  (req,res) => {
 }
 
 exports.nuevoProyecto = async (req,res) =>{
-    const proyectos = await Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
     //validar campo nombre tenga algo en el input
     const {nombre} = req.body;
 
@@ -39,8 +42,8 @@ exports.nuevoProyecto = async (req,res) =>{
     }else {
         //no hay problema
         //insertar a BD
-       
-        await Proyectos.create ({nombre});
+        const usuarioId = res.locals.usuario.id;
+        await Proyectos.create ({nombre,usuarioId});
         res.redirect('/')
         
       
@@ -48,10 +51,12 @@ exports.nuevoProyecto = async (req,res) =>{
 }
 
 exports.proyectoPorUrl = async (req, res, next) => {
-    const proyectosPromise =  Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectoPromise = Proyectos.findAll({where: {usuarioId : usuarioId}});
     const proyectoPromise =  Proyectos.findOne({
         where: {
-            url:req.params.url //url tiene que ser igual a como lo definimos en el router
+            url:req.params.url,
+            usuarioId                        //url tiene que ser igual a como lo definimos en el router
         }
     });
 
@@ -80,10 +85,11 @@ exports.proyectoPorUrl = async (req, res, next) => {
 }
 
 exports.formularioEditar = async (req,res) => {
-    const proyectosPromise =  Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectoPromise = Proyectos.findAll({where: {usuarioId : usuarioId}});
     const proyectoPromise =  Proyectos.findOne({
         where: {
-            id:req.params.id  //id tiene que ser igual a como lo definimos en el router
+            id:req.params.id, usuarioId  //id tiene que ser igual a como lo definimos en el router
         }
     });
 
@@ -99,7 +105,9 @@ exports.formularioEditar = async (req,res) => {
 
 
 exports.actualizarProyecto = async (req,res) =>{
-    const proyectos = await Proyectos.findAll();
+    const usuarioId = res.locals.usuario.id;
+    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
+    
     const {nombre} = req.body;
     let errores = [];
 
