@@ -8,6 +8,13 @@ html(lang="en")
 
             if error
                 p.alerta.error= error
+                
+            if locals.mensajes //si hay errores en el controller
+                .alertas
+                    each categoria in Object.keys(locals.mensajes)
+                        each error in mensajes[categoria]
+                            .alerta(class=`${categoria}`)
+                                p= error
 
             form#formulario.caja.caja-login(method="POST" action="/iniciar-sesion")
                 .campo
@@ -18,5 +25,6 @@ html(lang="en")
                     input(type="password" name="password" placeholder="Tu Password" value= password )
                 .campo.enviar
                     input.boton(type="submit" value="Iniciar Sesión")
-                .campo
+                .campo.acciones
                     a(href="/crear-cuenta") ¿Aún no tienes una cuenta? Crea una!
+                    a(href='/reestablecer') Restablecer Contraseña

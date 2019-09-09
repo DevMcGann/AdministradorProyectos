@@ -55,10 +55,9 @@ app.use((req,res,next) => {
     res.locals.vardump = helpers.vardump 
     //res locals es para crear aca y consumir en cualquier parte del proyecto
     res.locals.mensajes = req.flash();
-<<<<<<< HEAD
-=======
+
+
     res.locals.usuario = {...req.user} || null; 
->>>>>>> impren
     next();
     //next para garantizar que pase al siguiende MW
 });

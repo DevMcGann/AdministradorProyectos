@@ -28,11 +28,17 @@ exports.crearCuenta = async (req, res) =>{
         res.redirect('/iniciar-sesion')     
     } catch (error) {
         req.flash('error', error.errors.map(error => error.message));
-        res.render('crearCuenta', {
+        res.render('crearCuenta.pug', {
             mensajes: req.flash(),
             nombrePagina : 'Crear Cuenta en GSoft', 
             email,
             password
         })
     }
+}
+
+exports.formReestablecerPassword =  (req, res) =>{
+    res.render('reestablecer.pug', {
+        nombrePagina:'Restablecer Contraseña'
+    })
 }

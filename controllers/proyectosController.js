@@ -1,102 +1,110 @@
 const Proyectos = require('../models/Proyectos');
 const Tareas = require('../models/Tareas');
 
+exports.proyectosHome = async (req, res) => {
 
-exports.proyectosHome = async (req,res) => {
+    // console.log(res.locals.usuario);
+
     const usuarioId = res.locals.usuario.id;
-    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
+    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
     res.render('index.pug', {
-        nombrePagina: 'Proyectos Admin',
+        nombrePagina : 'Proyectos',
         proyectos
-    })
+    });
 }
 
-exports.formularioProyecto = async  (req,res) => {
+exports.formularioProyecto = async (req, res) => {
     const usuarioId = res.locals.usuario.id;
-    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
+    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
     res.render('nuevoProyecto.pug', {
-        nombrePagina:'Nuevo Proyecto',
+        nombrePagina: 'Nuevo Proyecto',
         proyectos
     })
 }
 
-exports.nuevoProyecto = async (req,res) =>{
+exports.nuevoProyecto = async (req, res) => {
+
     const usuarioId = res.locals.usuario.id;
-    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
-    //validar campo nombre tenga algo en el input
-    const {nombre} = req.body;
+    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
+    // Enviar a la consola lo que el usuario escriba.
+    // console.log(req.body);
+
+    // validar que tengamos algo en el input
+    const nombre = req.body.nombre;
 
     let errores = [];
 
-    if (!nombre){
-        errores.push({'texto' : 'Agrega un nombre al Proyecto'})
+    if(!nombre) {
+        errores.push({'texto': 'Agrega un Nombre al Proyecto'})
     }
 
-    //si hay errores
-    if (errores.length > 0) {
+    // si hay errores
+    if(errores.length > 0 ){
         res.render('nuevoProyecto.pug', {
-            nombrePagina : "Nuevo Proyecto",
+            nombrePagina : 'Nuevo Proyecto',
             errores,
             proyectos
         })
-    }else {
-        //no hay problema
-        //insertar a BD
+    } else {
+        // No hay errores
+        // Insertar en la BD.
         const usuarioId = res.locals.usuario.id;
-        await Proyectos.create ({nombre,usuarioId});
-        res.redirect('/')
-        
-      
+        await Proyectos.create({ nombre, usuarioId });
+        res.redirect('/');
     }
 }
 
 exports.proyectoPorUrl = async (req, res, next) => {
     const usuarioId = res.locals.usuario.id;
-    const proyectoPromise = Proyectos.findAll({where: {usuarioId : usuarioId}});
+    const proyectosPromise = Proyectos.findAll({where: { usuarioId  }});
+
     const proyectoPromise =  Proyectos.findOne({
         where: {
-            url:req.params.url,
-            usuarioId                        //url tiene que ser igual a como lo definimos en el router
+            url: req.params.url, 
+            usuarioId
         }
     });
+    const [proyectos, proyecto] = await Promise.all([proyectosPromise, proyectoPromise ]);
 
-    const[proyectos,proyecto] = await Promise.all([proyectosPromise,proyectoPromise]);
+    // Consultar tareas del Proyecto actual
 
-
-    //****TAAREAS****** */
-    //Consultar TAREAS del PROYECTo ACTUAL
     const tareas = await Tareas.findAll({
-        where:{
+        where: {
             proyectoId : proyecto.id
-        }/*,
-        include: [              //opcional, para que tb muestre a que proyecto pertenece la tarea. Tipo Join
-            {model:Proyectos}
-        ]*/
+        },
+        // include: [
+        //     { model: Proyectos }
+        // ]
     });
 
-    //pasarle a la vista
     if(!proyecto) return next();
+    // render a la vista
     res.render('tareas.pug', {
-        nombrePagina: 'Tareas del Proyecto',
+        nombrePagina : 'Tareas del Proyecto',
         proyecto,
-        proyectos,
+        proyectos, 
         tareas
     })
 }
 
-exports.formularioEditar = async (req,res) => {
+exports.formularioEditar = async (req, res) => {
     const usuarioId = res.locals.usuario.id;
-    const proyectoPromise = Proyectos.findAll({where: {usuarioId : usuarioId}});
-    const proyectoPromise =  Proyectos.findOne({
+    const proyectosPromise = Proyectos.findAll({where: { usuarioId  }});
+
+    const proyectoPromise = Proyectos.findOne({
         where: {
-            id:req.params.id, usuarioId  //id tiene que ser igual a como lo definimos en el router
+            id: req.params.id, 
+            usuarioId
         }
     });
+    const [proyectos, proyecto] = await Promise.all([proyectosPromise, proyectoPromise ]);
 
-    const[proyectos,proyecto] = await Promise.all([proyectosPromise,proyectoPromise]);
-
+    // render a la vista
     res.render('nuevoProyecto.pug', {
-        nombrePagina:'Editar Proyecto',
+        nombrePagina : 'Editar Proyecto',
         proyectos,
         proyecto
     })
@@ -104,39 +112,51 @@ exports.formularioEditar = async (req,res) => {
 
 
 
-exports.actualizarProyecto = async (req,res) =>{
+exports.actualizarProyecto = async (req, res) => {
+
     const usuarioId = res.locals.usuario.id;
-    const proyectos = await Proyectos.findAll({where: {usuarioId : usuarioId}});
-    
-    const {nombre} = req.body;
+    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
+    // Enviar a la consola lo que el usuario escriba.
+    // console.log(req.body);
+
+    // validar que tengamos algo en el input
+    const nombre = req.body.nombre;
+
     let errores = [];
 
-    if (!nombre){
-        errores.push({'texto' : 'Agrega un nombre al Proyecto'})
+    if(!nombre) {
+        errores.push({'texto': 'Agrega un Nombre al Proyecto'})
     }
 
-    //si hay errore
-    if (errores.length > 0) {
+    // si hay errores
+    if(errores.length > 0 ){
         res.render('nuevoProyecto.pug', {
-            nombrePagina : "Nuevo Proyecto",
+            nombrePagina : 'Nuevo Proyecto',
             errores,
             proyectos
         })
-    }else {
+    } else {
+        // No hay errores
+        // Insertar en la BD.
         await Proyectos.update(
-            {nombre:nombre},
-            {where: {id: req.params.id}}
-            );
-        res.redirect('/')
+            { nombre: nombre },
+            { where: { id: req.params.id }} 
+        );
+        res.redirect('/');
     }
 }
 
-
 exports.eliminarProyecto = async (req, res, next) => {
-    // Se puede por query o params
-    //console.log (req.query) y va a devolver como hayamos nombrado en proyectos.js  axios.delete(url, { params: {urlProyecto}})
+    // req, query o params
+    // console.log(req.query);
     const {urlProyecto} = req.query;
 
-    const resultado = await Proyectos.destroy({where: {url:urlProyecto}});
-    res.status(200).send('El proyecto ha sido Eliminado')
+    const resultado = await Proyectos.destroy({where: { url : urlProyecto}});
+
+    if(!resultado){
+        return next();
+    }
+
+    res.status(200).send('Proyecto Eliminado Correctamente');
 }
