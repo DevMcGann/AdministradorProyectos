@@ -13,7 +13,11 @@ passport.use(
         async (email,password,done) =>{
             try {
                 const usuario = await Usuarios.findOne({
-                    where:{email:email}
+                    where:{
+                        email:email,
+                        activo:1
+                    }
+
                 });
                 // usuario existe pero pass incorrecta
                 if(!usuario.verificarPassword(password)){

@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const pug = require('pug');
 const juice = require('juice'); //estilos lineales
 const htmlToText = require('html-to-text');
-const util = require('util');
+const util = require('util'); //para hacer que sendmail acepte async y await
 const emailConfig = require('../config/email');
 
 let transport = nodemailer.createTransport({
@@ -14,14 +14,27 @@ let transport = nodemailer.createTransport({
     }
   });
 
-  // send mail with defined transport object
-  let mailOptions =  
-  {
-    from: '"Gsoft Administrador de Proyectos" <no-reply@gsoft.com>', // sender address
-    to: 'prueba@gmail.com', // list of receivers
-    subject: 'Cambio de Password', // Subject line
-    text: 'Prueba', // plain text body
-    html: '<b>Esto es una prueba</b>' // html body
+  //generar html
+  const generarHTML = (archivo,opciones ={}) =>{
+    const html = pug.renderFile(`${__dirname}/../views/emails/${archivo}.pug`, opciones);
+    return juice(html);
+
+  }
+
+exports.enviar = async (opciones) => {
+    // send mail with defined transport object
+    const html = generarHTML(opciones.archivo, opciones);
+    const text =  htmlToText.fromString(html);
+    
+    let opcionesEmail =  
+    {
+      from: '"Gsoft Administrador de Proyectos" <no-reply@gsoft.com>', // sender address
+      to: opciones.usuario.email, // list of receivers
+      subject: opciones.subject, // Subject line
+      text,
+      html 
+  }
+  const enviarEmail = util.promisify(transport.sendMail, transport);
+  return enviarEmail.call(transport,opcionesEmail);
 }
 
-transport.sendMail(mailOptions);
