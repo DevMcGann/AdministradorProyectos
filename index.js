@@ -7,6 +7,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
+require('./handler/email');
 
 const db = require('./config/db');
 
