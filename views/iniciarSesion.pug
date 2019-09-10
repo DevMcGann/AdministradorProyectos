@@ -6,7 +6,7 @@ html(lang="en")
         .contenedor-formulario
             h1 Iniciar Sesión 
                 
-            if locals.mensajes //si hay errores en el controller
+            if locals.mensajes 
                 .alertas
                     each categoria in Object.keys(locals.mensajes)
                         each error in mensajes[categoria]
