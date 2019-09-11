@@ -155,6 +155,7 @@ exports.eliminarProyecto = async (req, res, next) => {
     const resultado = await Proyectos.destroy({where: { url : urlProyecto}});
 
     if(!resultado){
+        console.log("error eliminar")
         return next();
     }
 

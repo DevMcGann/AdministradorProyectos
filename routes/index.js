@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //express validator
-const {body} = require('express-validator/check')
+const {body} = require('express-validator')
 
 //importar controlador
 const proyectosController = require('../controllers/proyectosController')
@@ -32,7 +32,7 @@ module.exports = function() {
     proyectosController.actualizarProyecto);
 
     //Eliminar el proyect
-    router.delete('/proyecto/:url',authController.usuarioAutenticado, proyectosController.eliminarProyecto);
+    router.delete('/proyectos/:url',authController.usuarioAutenticado, proyectosController.eliminarProyecto);
 
 
     //********************TAREAS****************** */
@@ -63,7 +63,7 @@ module.exports = function() {
     //**********REEStablecer contraseña************** */
     router.get('/reestablecer', usuariosController.formReestablecerPassword);
     router.post('/reestablecer', authController.enviarToken);
-    router.get('reestablecer/:token', authController.validarToken);
+    router.get('/reestablecer/:token', authController.validarToken);
     router.post('/reestablecer/:token', authController.actualizarPassword);
 
 

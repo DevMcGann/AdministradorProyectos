@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const btnEliminar = document.querySelector('#eliminar-proyecto');
 
-
 if(btnEliminar){
     btnEliminar.addEventListener('click', e => {
         const urlProyecto = e.target.dataset.proyectoUrl;

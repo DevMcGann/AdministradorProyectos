@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt-nodejs');
 const enviarEmail = require('../handler/email');
+const Usuario = require('../models/Usuarios');
 
 
 
@@ -108,7 +109,7 @@ exports.actualizarPassword = async (req, res) =>{
     usuario.expiracion=null;
 
     //guardamos el new passw
-    await Usuario.save();
+    await usuario.save();
     req.flash('correcto','Tu contraseña se ha modificado correctamente');
     res.redirect('/iniciar-sesion');
 }
